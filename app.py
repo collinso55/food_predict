@@ -3,18 +3,18 @@ import pandas as pd
 import numpy as np
 import joblib
 
-# Load the trained model
+
 try:
     model = joblib.load('delivery_time_model.pkl')
 except FileNotFoundError:
     st.error("Model file 'delivery_time_model.pkl' not found. Please make sure to train and save your model first.")
     st.stop()
 
-# Set up the Streamlit app title and description
+
 st.title('Food Delivery Time Prediction')
 st.markdown('Enter the details of the delivery to predict the time it will take.')
 
-# Define the exact columns from the training data, in the correct order
+
 training_columns = [
     'Delivery_person_Age', 'Delivery_person_Ratings', 'Vehicle_condition',
     'multiple_deliveries', 'distance_km', 'order_hour', 'order_day_of_week',
@@ -29,7 +29,7 @@ training_columns = [
     'Festival_Yes ', 'City_NaN ', 'City_Semi-Urban ', 'City_Urban '
 ]
 
-# Create input widgets for user data
+
 st.header("Delivery Person & Vehicle")
 col1, col2 = st.columns(2)
 with col1:
@@ -54,13 +54,12 @@ with col4:
     festival = st.selectbox('Festival', ['No', 'Yes'])
     city = st.selectbox('City', ['Urban', 'Metropolitian', 'Semi-Urban', 'NaN'])
 
-# Create a button to trigger the prediction
+
 if st.button('Predict Delivery Time'):
-    # Prepare the input data in the same format as the training data
     input_data = pd.DataFrame(columns=training_columns)
     input_data.loc[0] = 0
 
-    # Populate the input data with user values
+    
     input_data['Delivery_person_Age'] = delivery_person_age
     input_data['Delivery_person_Ratings'] = delivery_person_ratings
     input_data['Vehicle_condition'] = vehicle_condition
@@ -70,7 +69,7 @@ if st.button('Predict Delivery Time'):
     input_data['order_day_of_week'] = order_day_of_week
     input_data['order_day_of_month'] = order_day_of_month
 
-    # Set the one-hot encoded values based on user input
+    
     weather_key = f'Weatherconditions_conditions {weather_conditions}'
     if weather_conditions == 'NaN':
         input_data['Weatherconditions_conditions NaN'] = 1
@@ -101,8 +100,8 @@ if st.button('Predict Delivery Time'):
     elif city_key in input_data.columns:
         input_data[city_key] = 1
     
-    # Make the prediction
+    
     prediction = model.predict(input_data)
     
-    # Display the result
+   
     st.success(f'Predicted delivery time is: {prediction[0]:.2f} minutes')
