@@ -44,8 +44,13 @@ col3, col4 = st.columns(2)
 with col3:
     distance_km = st.number_input('Distance from Restaurant (km)', min_value=0.1, max_value=50.0, value=5.0)
     order_hour = st.slider('Order Hour (0-23)', min_value=0, max_value=23, value=12)
-    order_day_of_week = st.slider('Day of the Week (0=Mon, 6=Sun)', min_value=0, max_value=6, value=2)
-    order_day_of_month = st.slider('Day of the Month (1-31)', min_value=1, max_value=31, value=15)
+    # --- UPDATED CODE: Day of the Week as a selectbox ---
+    day_mapping = {'Monday': 0, 'Tuesday': 1, 'Wednesday': 2, 'Thursday': 3, 'Friday': 4, 'Saturday': 5, 'Sunday': 6}
+    selected_day = st.selectbox('Day of the Week', options=list(day_mapping.keys()), index=2)
+    order_day_of_week = day_mapping[selected_day]
+    # --- UPDATED CODE: Day of the Month as a selectbox ---
+    order_day_of_month = st.selectbox('Day of the Month', options=list(range(1, 32)), index=14)
+
 with col4:
     weather_conditions = st.selectbox('Weather Conditions', ['Sunny', 'Stormy', 'Cloudy', 'Windy', 'Fog', 'Sandstorms', 'NaN'])
     traffic_density = st.selectbox('Road Traffic Density', ['Low', 'Medium', 'High', 'Jam', 'NaN'])
@@ -103,5 +108,5 @@ if st.button('Predict Delivery Time'):
     
     prediction = model.predict(input_data)
     
-   
+    
     st.success(f'Predicted delivery time is: {prediction[0]:.2f} minutes')
